@@ -100,9 +100,20 @@ export function ParkingDashboard({ parkingSpots, onRemoveVehicle }: ParkingDashb
                   <XCircle className="text-red-600" size={20} />
                 )}
               </div>
+              
+              {/* Ikon Motor */}
+              {!spot.vehicle && (
+                <div className="flex justify-center items-center py-4">
+                  <Bike className="text-gray-400" size={48} />
+                </div>
+              )}
+              
               {spot.vehicle && (
                 <div className="space-y-1 pt-2 border-t border-gray-300">
-                  <p className="text-gray-700 truncate">{spot.vehicle.platNomor}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Bike className="text-gray-600" size={20} />
+                    <p className="text-gray-700 truncate">{spot.vehicle.platNomor}</p>
+                  </div>
                   <p className="text-gray-600 truncate">{spot.vehicle.namaPemilik}</p>
                   <p className="text-gray-500">Kamar {spot.vehicle.nomorKamar}</p>
                   <p className="text-gray-500">{hitungDurasi(spot.vehicle.waktuMasuk)}</p>
@@ -144,9 +155,20 @@ export function ParkingDashboard({ parkingSpots, onRemoveVehicle }: ParkingDashb
                   <XCircle className="text-red-600" size={24} />
                 )}
               </div>
+              
+              {/* Ikon Mobil */}
+              {!spot.vehicle && (
+                <div className="flex justify-center items-center py-6">
+                  <Car className="text-gray-400" size={64} />
+                </div>
+              )}
+              
               {spot.vehicle && (
                 <div className="space-y-1 pt-2 border-t border-gray-300">
-                  <p className="text-gray-700">{spot.vehicle.platNomor}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Car className="text-gray-600" size={20} />
+                    <p className="text-gray-700">{spot.vehicle.platNomor}</p>
+                  </div>
                   <p className="text-gray-600">{spot.vehicle.namaPemilik}</p>
                   <p className="text-gray-500">Kamar {spot.vehicle.nomorKamar}</p>
                   <p className="text-gray-500">Masuk: {formatWaktu(spot.vehicle.waktuMasuk)}</p>

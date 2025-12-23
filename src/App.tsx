@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Login } from './components/Login';
 import { ParkingDashboard } from './components/ParkingDashboard';
 import { VehicleRegistration } from './components/VehicleRegistration';
 import { ParkingHistory } from './components/ParkingHistory';
@@ -75,6 +76,8 @@ export interface Guard {
 export type UserRole = 'admin' | 'guard' | 'customer';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState('');
   const [userRole, setUserRole] = useState<UserRole>('admin');
   const [activeTab, setActiveTab] = useState<string>('admin-dashboard');
   
@@ -303,6 +306,29 @@ export default function App() {
     );
   };
 
+  const handleLogin = (role: UserRole, username: string) => {
+    setIsAuthenticated(true);
+    setCurrentUser(username);
+    setUserRole(role);
+    setActiveTab(
+      role === 'admin' ? 'admin-dashboard' :
+      role === 'guard' ? 'guard-dashboard' :
+      'dashboard'
+    );
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentUser('');
+    setUserRole('admin');
+    setActiveTab('admin-dashboard');
+  };
+
+  // If not authenticated, show login page
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   const renderContent = () => {
     // Admin Views
     if (userRole === 'admin') {
@@ -356,43 +382,43 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-100">
       {/* Header */}
       <div className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-indigo-600 p-3 rounded-lg">
+              <div className="bg-teal-600 p-3 rounded-lg">
                 <Car className="text-white" size={32} />
               </div>
               <div>
-                <h1 className="text-indigo-900">Smart Parkir.id</h1>
+                <h1 className="text-teal-900">Smart Parkir.id</h1>
                 <p className="text-gray-600">Sistem Parkir Pintar Kos-Kosan</p>
               </div>
             </div>
             
-            {/* Role Switcher */}
-            <div className="flex items-center gap-3">
-              <select
-                value={userRole}
-                onChange={(e) => {
-                  setUserRole(e.target.value as UserRole);
-                  setActiveTab(
-                    e.target.value === 'admin' ? 'admin-dashboard' :
-                    e.target.value === 'guard' ? 'guard-dashboard' :
-                    'dashboard'
-                  );
-                }}
-                className="px-4 py-2 border-2 border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="admin">Admin</option>
-                <option value="guard">Penjaga</option>
-                <option value="customer">Customer</option>
-              </select>
+            {/* User Info & Logout */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-4 py-2 bg-teal-50 rounded-lg border-2 border-teal-200">
+                {userRole === 'admin' && <Shield className="text-red-600" size={20} />}
+                {userRole === 'guard' && <Users className="text-blue-600" size={20} />}
+                {userRole === 'customer' && <UserCircle className="text-green-600" size={20} />}
+                
+                <div>
+                  <p className="text-sm text-gray-600">
+                    {userRole === 'admin' ? 'Admin' : userRole === 'guard' ? 'Penjaga' : 'Customer'}
+                  </p>
+                  <p className="text-teal-900">{currentUser}</p>
+                </div>
+              </div>
               
-              {userRole === 'admin' && <Shield className="text-red-600" size={24} />}
-              {userRole === 'guard' && <Users className="text-blue-600" size={24} />}
-              {userRole === 'customer' && <UserCircle className="text-green-600" size={24} />}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors border-2 border-red-200"
+              >
+                <LogOut size={20} />
+                Logout
+              </button>
             </div>
           </div>
         </div>
@@ -407,7 +433,7 @@ export default function App() {
                 onClick={() => setActiveTab('admin-dashboard')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'admin-dashboard'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -418,7 +444,7 @@ export default function App() {
                 onClick={() => setActiveTab('daily-report')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'daily-report'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -429,7 +455,7 @@ export default function App() {
                 onClick={() => setActiveTab('slot-management')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'slot-management'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -440,7 +466,7 @@ export default function App() {
                 onClick={() => setActiveTab('active-vehicles')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'active-vehicles'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -451,7 +477,7 @@ export default function App() {
                 onClick={() => setActiveTab('qr-validation')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'qr-validation'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -462,7 +488,7 @@ export default function App() {
                 onClick={() => setActiveTab('guard-profile')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'guard-profile'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -478,7 +504,7 @@ export default function App() {
                 onClick={() => setActiveTab('guard-dashboard')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'guard-dashboard'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -489,7 +515,7 @@ export default function App() {
                 onClick={() => setActiveTab('register')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'register'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -500,7 +526,7 @@ export default function App() {
                 onClick={() => setActiveTab('qr-validation')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'qr-validation'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -511,7 +537,7 @@ export default function App() {
                 onClick={() => setActiveTab('active-vehicles')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'active-vehicles'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -527,7 +553,7 @@ export default function App() {
                 onClick={() => setActiveTab('dashboard')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'dashboard'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -538,7 +564,7 @@ export default function App() {
                 onClick={() => setActiveTab('register')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'register'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -549,7 +575,7 @@ export default function App() {
                 onClick={() => setActiveTab('history')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'history'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
@@ -560,7 +586,7 @@ export default function App() {
                 onClick={() => setActiveTab('profile')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-md transition-colors whitespace-nowrap ${
                   activeTab === 'profile'
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-teal-600 text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
